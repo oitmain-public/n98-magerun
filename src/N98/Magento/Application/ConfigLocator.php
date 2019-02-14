@@ -54,12 +54,14 @@ class ConfigLocator
         $personalConfigFilePaths = $this->getUserConfigFilePaths();
 
         foreach ($personalConfigFilePaths as $personalConfigFilePath) {
-            try {
-                $userConfigFile = ConfigFile::createFromFile($personalConfigFilePath);
-                $userConfigFile->applyVariables($this->magentoRootFolder);
-                break;
-            } catch (InvalidArgumentException $e) {
-                $userConfigFile = null;
+            if(!$userConfigFile) {
+                try {
+                    $userConfigFile = ConfigFile::createFromFile($personalConfigFilePath);
+                    $userConfigFile->applyVariables($this->magentoRootFolder);
+                    break;
+                } catch (InvalidArgumentException $e) {
+                    $userConfigFile = null;
+                }
             }
         }
 
@@ -141,8 +143,10 @@ class ConfigLocator
 
         if (OperatingSystem::isWindows()) {
             $paths[] = $homeDirectory . '/' . $basename;
+            $paths[] = getcwd() . '/' . $basename;
         }
         $paths[] = $homeDirectory . '/.' . $basename;
+        $paths[] = getcwd() . '/.' . $basename;
 
         return $paths;
     }
