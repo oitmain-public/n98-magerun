@@ -56,7 +56,14 @@ class DatabaseHelper extends AbstractHelper
         $application = $this->getApplication();
         $application->detectMagento();
 
-        $configFile = $application->getMagentoRootFolder() . '/app/etc/local.xml';
+        $config = $application->getConfig();
+        if (isset($config['application']['app/etc/local.xml'])) {
+            $configFile =$config['application']['app/etc/local.xml'];
+        }
+        else{
+            $configFile = $application->getMagentoRootFolder() . '/app/etc/local.xml';
+        }
+        $output->writeln(@$config['application']['app/etc/local.xml']);
 
         if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
             $output->writeln(
